@@ -7,6 +7,8 @@ package example.model;
  */
 public class SimpleBankAccount implements BankAccount {
 
+    private static final int WITHDRAW_FEE = 1;
+
     private double balance;
     private final AccountHolder holder;
 
@@ -26,23 +28,30 @@ public class SimpleBankAccount implements BankAccount {
 
     @Override
     public void deposit(final int userID, final double amount) {
-        if (checkUser(userID)) {
-            this.balance += amount;
-        }
+        checkUserValidity(userID);
+        this.balance += amount;
     }
 
     @Override
     public void withdraw(final int userID, final double amount) {
-        if (checkUser(userID) && isWithdrawAllowed(amount)) {
-            this.balance -= amount;
+        checkUserValidity(userID);
+        checkWithdrawAllowed(amount);
+        this.balance -= amount + WITHDRAW_FEE;
+    }
+
+    private void checkWithdrawAllowed(final double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Negative amount not permitted");
+        }
+
+        if (this.balance <= amount + WITHDRAW_FEE) {
+            throw new IllegalArgumentException("Not enough balance");
         }
     }
 
-    private boolean isWithdrawAllowed(final double amount){
-        return this.balance >= amount;
-    }
-
-    private boolean checkUser(final int id) {
-        return this.holder.getId() == id;
+    private void checkUserValidity(final int id) {
+        if (this.holder.getId() != id) {
+            throw new IllegalArgumentException("Wrong user id");
+        }
     }
 }
