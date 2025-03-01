@@ -9,6 +9,8 @@ class MinMaxStackImplTest {
 
     public static final int VALUE = 1234;
     public static final int MIN_VALUE = 1;
+    public static final int MAX_VALUE = 10;
+
     MinMaxStack stack;
 
     @BeforeEach
@@ -66,9 +68,26 @@ class MinMaxStackImplTest {
 
     @Test
     void testGetMinAfterPushingSomeValues() {
-        int minValue = 0;
-        int maxValue = 10;
-        for (int i = minValue; i < maxValue; i++) stack.push(i);
-        assertEquals(minValue, stack.getMin());
+        for (int i = MIN_VALUE; i <= MAX_VALUE; i++)
+            stack.push(i);
+        assertEquals(MIN_VALUE, stack.getMin());
+    }
+
+    @Test
+    void testGetMaxWithEmptyStack() {
+        assertThrows(IllegalStateException.class, () -> stack.getMax());
+    }
+
+    @Test
+    void testGetMax() {
+        stack.push(VALUE);
+        assertEquals(VALUE, stack.getMax());
+    }
+
+    @Test
+    void testGetMaxAfterPushingSomeValues() {
+        for (int i = MIN_VALUE; i <= MAX_VALUE; i++)
+            stack.push(i);
+        assertEquals(MAX_VALUE, stack.getMax());
     }
 }
